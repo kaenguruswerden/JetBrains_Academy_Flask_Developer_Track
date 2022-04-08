@@ -1,20 +1,24 @@
+import sys
+
 from flask import Flask
 from flask_restful import Api
-import sys
 
 from database import db
 from request_resources import TodaysEventsResource, AllEventsResource, EventByID
 
+
+# Set up the main app
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///calendar.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Set up the database
 db.init_app(app)
 db.create_all(app=app)
 
+# Set up the API for the app
 api = Api(app)
-
 
 api.add_resource(TodaysEventsResource, "/event/today")
 api.add_resource(AllEventsResource, "/event")

@@ -1,8 +1,9 @@
 from flask_restful import reqparse, inputs
 
 
-parser = reqparse.RequestParser()
-parser.add_argument(
+# Set up parser for the adding events
+event_parser = reqparse.RequestParser()
+event_parser.add_argument(
     "date",
     type=inputs.date,
     help="The event date with the correct format is required! The correct format is YYYY-MM-DD!",
@@ -10,7 +11,7 @@ parser.add_argument(
     location=["args", "form"]
 )
 
-parser.add_argument(
+event_parser.add_argument(
     "event",
     type=str,
     help="The event name is required!",
@@ -18,6 +19,7 @@ parser.add_argument(
     location=["args", "form"]
 )
 
+# Set up parser to get events in time range
 interval_parser = reqparse.RequestParser()
 interval_parser.add_argument(
     "start_time",

@@ -4,7 +4,7 @@ from flask_restful import Resource, marshal_with
 from flask import abort
 
 from database import db, Events, event_resource_fields
-from request_parser import parser, interval_parser
+from request_parser import event_parser, interval_parser
 
 
 class TodaysEventsResource(Resource):
@@ -19,7 +19,7 @@ class TodaysEventsResource(Resource):
 class AllEventsResource(Resource):
     @staticmethod
     def post():
-        args = parser.parse_args()
+        args = event_parser.parse_args()
         event = Events(event=args["event"], date=args["date"].date())
         db.session.add(event)
         db.session.commit()
@@ -35,13 +35,12 @@ class AllEventsResource(Resource):
     def get():
         # print("AllEvents")
         args = interval_parser.parse_args()
-        # print(args)
         if not args["start_time"] and not args["end_time"]:
             events = Events.query.all()
-        elif "start_time" not in args.keys() or "end_time" not in args.keys():
+        elif args["start_time"] and not args["end_time"] or not args["start_time"] and args["end_time"]:
             abort(404, "Incorrect time interval")
+            return  # not necessary, abort should be enough, just to prevent PyCharm warning
         else:
-            # print(args["start_time"].date(), args["end_time"].date())
             events = Events.query.filter(Events.date.between(args["start_time"].date(), args["end_time"].date())).all()
         return events
 
